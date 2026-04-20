@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:musicdb}
+    username: ${POSTGRES_USER:admin}
+    password: ${POSTGRES_PASSWORD:admin123}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+
+  cassandra:
+      keyspace-name: ${CASSANDRA_KEYSPACE:music_keyspace}
+      contact-points: localhost
+      port: 9042
+      local-datacenter: ${CASSANDRA_DATACENTER:datacenter1}
+      schema-action: CREATE_IF_NOT_EXISTS
+
+  mongodb:
+      uri: mongodb://localhost:27017/${MONGO_DB:musicdb}
+
+server:
+  port: ${SPRING_PORT:8080}
