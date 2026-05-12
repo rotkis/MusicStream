@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Músicas - Vibes</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo-area">
+            <span class="logo">Vibes</span>
+            <button class="upload-btn" onclick="irUpload()">Upload</button>
+        </div>
+
+        <input type="text" id="busca" placeholder="Buscar músicas...">
+        
+        <button onclick="voltarHome()">🏠</button>
+    </header>
+
+    <!-- CONTEÚDO -->
+    <main class="section">
+        <h2>🎵 Minhas Músicas</h2>
+
+        <div class="cards" id="lista-musicas"></div>
+    </main>
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/minhas-musicas.js"></script>
+</body>
+</html>

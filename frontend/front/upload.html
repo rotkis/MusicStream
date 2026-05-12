@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload - Vibes</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo-area">
+            <span class="logo">Vibes</span>
+        </div>
+
+        <button onclick="voltarHome()">← Voltar</button>
+    </header>
+
+    <!-- CONTEÚDO -->
+    <main class="upload-container">
+
+        <h1>Upload de Música 🎵</h1>
+
+        <input type="text" id="nome" placeholder="Nome da música">
+        <input type="text" id="artista" placeholder="Artista">
+
+        <input type="file" id="arquivo" accept="audio/*">
+
+        <button onclick="upload()">Enviar Música</button>
+
+        <p id="status"></p>
+
+    </main>
+
+</div>
+
+<script src="js/upload.js"></script>
+</body>
+</html>
