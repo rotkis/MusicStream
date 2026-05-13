@@ -1,0 +1,5 @@
+/* ajustes para React */
+body {
+  margin: 0;
+  padding-bottom: 80px; /* espaço para o player fixo */
+}
