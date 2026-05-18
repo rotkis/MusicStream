@@ -22,7 +22,6 @@ export default function Header({ showSearch = true, onSearch }) {
         <a onClick={() => navigate('/home')}>Início</a>
         <a onClick={() => navigate('/minhas-musicas')}>Músicas</a>
         <a onClick={() => navigate('/minhas-playlists')}>Playlists</a>
-        <button className="upload-btn" onClick={() => navigate('/upload')}>+ Upload</button>
       </nav>
     </header>
   );

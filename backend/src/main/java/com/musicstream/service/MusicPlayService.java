@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.musicstream.dto.TopMusicDTO;
 import com.musicstream.model.cassandra.MusicPlay;
 import com.musicstream.model.postgres.Music;
 import com.musicstream.repository.cassandra.MusicPlayRepository;
@@ -38,7 +39,7 @@ public class MusicPlayService {
     }
 
     // Top N mais ouvidas — conta linhas por musicId e ordena
-    public List<Music> getTopMusics(int limit) {
+    public List<TopMusicDTO> getTopMusics(int limit) {
         Map<String, Long> playCount = playRepository.findAll()
             .stream()
             .collect(Collectors.groupingBy(
@@ -48,7 +49,14 @@ public class MusicPlayService {
         return playCount.entrySet().stream()
             .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
             .limit(limit)
-            .map(e -> musicRepository.findById(e.getKey()).orElse(null))
+            .map(e -> {
+                Music music = musicRepository.findById(e.getKey()).orElse(null);
+                if (music == null) return null;
+                return new TopMusicDTO(
+                    music.getId(), music.getTitle(), music.getArtist(),
+                    music.getAlbum(), music.getGenre(), music.getDurationSeconds(), e.getValue()
+                );
+            })
             .filter(Objects::nonNull)
             .toList();
     }

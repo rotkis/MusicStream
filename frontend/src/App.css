@@ -143,22 +143,6 @@ input { font-family: inherit; }
   background: var(--surface2);
 }
 
-.header .upload-btn {
-  background: var(--accent);
-  color: #000;
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 7px 16px;
-  border-radius: 99px;
-  letter-spacing: 0.04em;
-  transition: opacity var(--transition), transform var(--transition);
-}
-
-.header .upload-btn:hover {
-  opacity: 0.88;
-  transform: scale(1.03);
-}
-
 /* ── Banner ─────────────────────────────────────────────────────────────── */
 .banner {
   position: relative;
@@ -701,18 +685,6 @@ input { font-family: inherit; }
 
 .search-bar:focus { border-color: var(--accent); }
 .search-bar::placeholder { color: var(--text-muted); }
-
-/* ── Upload ─────────────────────────────────────────────────────────────── */
-.upload-area {
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-lg);
-  padding: 60px 40px;
-  text-align: center;
-  color: var(--text-muted);
-  transition: border-color var(--transition);
-}
-
-.upload-area:hover { border-color: var(--accent); color: var(--text); }
 
 /* ── Playlist grid ──────────────────────────────────────────────────────── */
 .playlist-grid {

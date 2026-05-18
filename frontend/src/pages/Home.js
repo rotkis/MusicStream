@@ -5,6 +5,7 @@ import PlaylistCard from '../components/PlaylistCard';
 import FilaReproducao from '../components/FilaReproducao';
 import { getMusicas, getTopMusicas, getPlaylists } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { usePlayer } from '../contexts/PlayerContext';
 
 export default function Home() {
   const [musicas, setMusicas] = useState([]);
@@ -12,7 +13,18 @@ export default function Home() {
   const [playlists, setPlaylists] = useState([]);
   const [erro, setErro] = useState(null);
   const { user } = useAuth();
+  const { play } = usePlayer();
   const userId = user?.id;
+
+  const handlePlayRandom = () => {
+    const lista = musicas.length > 0 ? musicas : top;
+    if (lista.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * lista.length);
+    const chosen = lista[randomIndex];
+    const outras = lista.filter((m) => m.id !== chosen.id);
+    const shuffled = [...outras].sort(() => Math.random() - 0.5);
+    play(chosen, [chosen, ...shuffled]);
+  };
 
   useEffect(() => {
     async function load() {
@@ -41,7 +53,7 @@ export default function Home() {
       <section className="banner">
         <div className="banner-content">
           <h1>Escute o que<br /><span>te move</span></h1>
-          <button>▶ Reproduzir Agora</button>
+          <button onClick={handlePlayRandom}>▶ Reproduzir Agora</button>
         </div>
       </section>
 
@@ -55,8 +67,22 @@ export default function Home() {
           <h2>🔥 Top mais ouvidas</h2>
           <div className="cards">
             {top.map((m, i) => (
-              <div key={m.id} style={{ animationDelay: `${i * 0.05}s` }}>
+              <div key={m.id} style={{ position: 'relative', animationDelay: `${i * 0.05}s` }}>
                 <MusicCard musica={m} allMusicas={todasMusicas} />
+                <div style={{
+                  position: 'absolute',
+                  top: 6, left: 6,
+                  background: 'rgba(200,241,53,0.15)',
+                  color: 'var(--accent)',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: 99,
+                  border: '1px solid rgba(200,241,53,0.25)',
+                  backdropFilter: 'blur(4px)',
+                }}>
+                  {m.playCount} plays
+                </div>
               </div>
             ))}
           </div>

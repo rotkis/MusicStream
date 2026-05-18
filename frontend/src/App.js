@@ -8,7 +8,6 @@ import Registro from './pages/Registro';
 import MinhasMusicas from './pages/MinhasMusicas';
 import MinhasPlaylists from './pages/MinhasPlaylists';
 import PlaylistPage from './pages/PlaylistPage';
-import Upload from './pages/Upload';
 import PlayerPage from './pages/PlayerPage';
 import FooterPlayer from './components/FooterPlayer';
 
@@ -32,7 +31,6 @@ function AppRoutes() {
         <Route path="/minhas-musicas"   element={<PrivateRoute><MinhasMusicas /></PrivateRoute>} />
         <Route path="/minhas-playlists" element={<PrivateRoute><MinhasPlaylists /></PrivateRoute>} />
         <Route path="/playlist/:id"     element={<PrivateRoute><PlaylistPage /></PrivateRoute>} />
-        <Route path="/upload"           element={<PrivateRoute><Upload /></PrivateRoute>} />
         <Route path="/player"           element={<PrivateRoute><PlayerPage /></PrivateRoute>} />
 
         <Route path="*" element={<Navigate to="/login" />} />

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicstream.dto.MusicDTO;
+import com.musicstream.dto.TopMusicDTO;
 import com.musicstream.model.postgres.Music;
 
 import com.musicstream.service.MusicPlayService;
@@ -66,7 +67,7 @@ public class MusicController {
     }
 
     @GetMapping("/top")
-    public ResponseEntity<List<Music>> getTop(
+    public ResponseEntity<List<TopMusicDTO>> getTop(
             @RequestParam(defaultValue = "10") int limit) {
         return ResponseEntity.ok(playService.getTopMusics(limit));
     }

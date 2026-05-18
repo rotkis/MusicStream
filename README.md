@@ -47,4 +47,4 @@ Acessar em http://localhost:3000
 | `/minhas-playlists` | Gerenciar playlists |
 | `/playlist/:id` | Detalhes da playlist |
 | `/player` | Player com fila de reprodução |
-| `/upload` | Upload de músicas |
+
