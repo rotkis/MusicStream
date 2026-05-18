@@ -1,25 +1,28 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:musicdb}
+    
+    url: jdbc:postgresql://${POSTGRES_HOST:postgres}:5432/${POSTGRES_DB:musicdb}
     username: ${POSTGRES_USER:admin}
     password: ${POSTGRES_PASSWORD:admin123}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update   # CORRIGIDO: era "create-drop" — apagava o banco a cada restart
     show-sql: true
 
-
   cassandra:
-      keyspace-name: ${CASSANDRA_KEYSPACE:music_keyspace}
-      contact-points: localhost
-      port: 9042
-      local-datacenter: ${CASSANDRA_DATACENTER:datacenter1}
-      schema-action: CREATE_IF_NOT_EXISTS
+    keyspace-name: ${CASSANDRA_KEYSPACE:music_keyspace}
+    # CORRIGIDO: "cassandra" é o nome do serviço no docker-compose
+    contact-points: ${CASSANDRA_HOST:cassandra}
+    port: 9042
+    local-datacenter: ${CASSANDRA_DATACENTER:datacenter1}
+    schema-action: CREATE_IF_NOT_EXISTS
 
+  
   mongodb:
-      uri: mongodb://localhost:27017/${MONGO_DB:musicdb}
+      
+      uri: mongodb://${MONGO_HOST:mongodb}:27017/${MONGO_DB:musicdb}
 
 server:
   port: ${SPRING_PORT:8080}

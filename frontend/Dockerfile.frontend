@@ -1,0 +1,21 @@
+# Stage 1: Build do React
+FROM node:20-alpine AS build
+WORKDIR /app
+
+# Instala dependências primeiro (cache do Docker)
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copia o código e gera o build de produção
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve com nginx (imagem pequena, ~25MB)
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Config do nginx para funcionar com React Router (rotas do lado do cliente)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
