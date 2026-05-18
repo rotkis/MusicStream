@@ -10,14 +10,9 @@ Sistema de streaming de música para aprender backend Java com Spring Boot.
 
 ## Como rodar
 ```bash
-# 1. Sobe os bancos
-docker-compose up -d
 
-# 2. Roda o backend
-cd backend && ./mvnw spring-boot:run
+docker compose up --build -d
 
-# 3. Roda o frontend
-cd frontend && npm install && npm start
 ```
 
 ## Endpoints principais
