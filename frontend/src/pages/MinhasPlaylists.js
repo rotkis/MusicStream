@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import PlaylistCard from '../components/PlaylistCard';
-import { getPlaylists, criarPlaylist } from '../services/api';
+import { getPlaylists, criarPlaylist, deletarPlaylist } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function MinhasPlaylists() {
@@ -32,6 +32,16 @@ export default function MinhasPlaylists() {
       setErro('Erro ao criar playlist.');
     } finally {
       setSalvando(false);
+    }
+  };
+
+  const handleDeletar = async (playlistId) => {
+    if (!window.confirm('Tem certeza que deseja deletar esta playlist?')) return;
+    try {
+      await deletarPlaylist(playlistId);
+      setPlaylists((prev) => prev.filter((p) => p.id !== playlistId));
+    } catch {
+      setErro('Erro ao deletar playlist.');
     }
   };
 
@@ -108,7 +118,31 @@ export default function MinhasPlaylists() {
 
         <div className="playlist-grid">
           {playlists.map((p) => (
-            <PlaylistCard key={p.id} playlist={p} />
+            <div key={p.id} style={{ position: 'relative' }}>
+              <PlaylistCard playlist={p} />
+              <button
+                onClick={() => handleDeletar(p.id)}
+                title="Deletar playlist"
+                style={{
+                  position: 'absolute',
+                  top: 6, right: 6,
+                  width: 26, height: 26,
+                  borderRadius: '50%',
+                  background: 'rgba(255,60,60,0.8)',
+                  border: 'none',
+                  color: '#fff',
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  zIndex: 10,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  lineHeight: 1,
+                }}
+              >
+                ✕
+              </button>
+            </div>
           ))}
         </div>
 

@@ -58,4 +58,29 @@ export async function getMusicasPorGenre(genre) {
   return res.json();
 }
 
+export async function adicionarMusicaPlaylist(playlistId, musicaId) {
+  const res = await fetch(`${API_URL}/playlists/${playlistId}/musicas/${musicaId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) throw new Error('Erro ao adicionar música à playlist');
+  return res.json();
+}
+
+export async function deletarPlaylist(playlistId) {
+  const res = await fetch(`${API_URL}/playlists/${playlistId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Erro ao deletar playlist');
+}
+
+export async function removerMusicaPlaylist(playlistId, musicaId) {
+  const res = await fetch(`${API_URL}/playlists/${playlistId}/musicas/${musicaId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Erro ao remover música da playlist');
+  return res.json();
+}
+ 
+
 // REMOVIDO: uploadMusica — não existe endpoint /api/upload no backend

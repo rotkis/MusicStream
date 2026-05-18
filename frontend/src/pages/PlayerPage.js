@@ -3,6 +3,7 @@ import { usePlayer } from '../contexts/PlayerContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { registrarPlay } from '../services/api';
+import FilaReproducao from '../components/FilaReproducao';
 
 export default function PlayerPage() {
   const { currentMusic, playing, togglePlay } = usePlayer();
@@ -95,6 +96,8 @@ export default function PlayerPage() {
           {playing ? '⏸' : '▶'}
         </button>
       </div>
+
+      <FilaReproducao />
     </div>
   );
 }

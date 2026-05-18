@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
+import FilaReproducao from '../components/FilaReproducao';
 import { getMusicas } from '../services/api';
 
 export default function MinhasMusicas() {
@@ -42,7 +43,7 @@ export default function MinhasMusicas() {
         <div className="cards">
           {filtradas.map((m, i) => (
             <div key={m.id} style={{ animationDelay: `${i * 0.03}s` }}>
-              <MusicCard musica={m} />
+              <MusicCard musica={m} allMusicas={musicas} />
             </div>
           ))}
         </div>
@@ -50,6 +51,9 @@ export default function MinhasMusicas() {
           <p style={{ color: 'var(--text-muted)', marginTop: 24 }}>Nenhuma música encontrada.</p>
         )}
       </main>
+
+      {/* Fila de reprodução */}
+      <FilaReproducao />
     </div>
   );
 }

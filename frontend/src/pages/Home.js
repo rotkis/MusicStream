@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
 import PlaylistCard from '../components/PlaylistCard';
+import FilaReproducao from '../components/FilaReproducao';
 import { getMusicas, getTopMusicas, getPlaylists } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -30,6 +31,9 @@ export default function Home() {
     load();
   }, [userId]);
 
+  // Lista completa para gerar fila aleatória ao tocar
+  const todasMusicas = [...new Map([...top, ...musicas].map(m => [m.id, m])).values()];
+
   return (
     <div className="app">
       <Header />
@@ -43,13 +47,16 @@ export default function Home() {
 
       {erro && <p className="erro" style={{ padding: '16px 40px' }}>{erro}</p>}
 
+      {/* Seção de próximas músicas (fila de reprodução) */}
+      <FilaReproducao />
+
       {top.length > 0 && (
         <section className="section">
           <h2>🔥 Top mais ouvidas</h2>
           <div className="cards">
             {top.map((m, i) => (
               <div key={m.id} style={{ animationDelay: `${i * 0.05}s` }}>
-                <MusicCard musica={m} />
+                <MusicCard musica={m} allMusicas={todasMusicas} />
               </div>
             ))}
           </div>
@@ -61,7 +68,7 @@ export default function Home() {
         <div className="cards">
           {musicas.map((m, i) => (
             <div key={m.id} style={{ animationDelay: `${i * 0.03}s` }}>
-              <MusicCard musica={m} />
+              <MusicCard musica={m} allMusicas={todasMusicas} />
             </div>
           ))}
         </div>
