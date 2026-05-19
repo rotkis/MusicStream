@@ -39,12 +39,14 @@ public class MusicPlayService {
     }
 
     // Top N mais ouvidas — conta linhas por musicId e ordena
-    public List<TopMusicDTO> getTopMusics(int limit) {
-        Map<String, Long> playCount = playRepository.findAll()
-            .stream()
-            .collect(Collectors.groupingBy(
-                MusicPlay::getMusicId, Collectors.counting()
-            ));
+    public List<TopMusicDTO> getTopMusics(int limit, String userId) {
+        var plays = playRepository.findAll().stream();
+        if (userId != null) {
+            plays = plays.filter(p -> userId.equals(p.getUserId()));
+        }
+        Map<String, Long> playCount = plays.collect(Collectors.groupingBy(
+            MusicPlay::getMusicId, Collectors.counting()
+        ));
 
         return playCount.entrySet().stream()
             .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
@@ -59,6 +61,11 @@ public class MusicPlayService {
             })
             .filter(Objects::nonNull)
             .toList();
+    }
+
+    // Remove todos os registros de play
+    public void resetAllPlays() {
+        playRepository.deleteAll();
     }
 
     // Shuffle ponderado — músicas mais ouvidas têm mais "fichas" no sorteio

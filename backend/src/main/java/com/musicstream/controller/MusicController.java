@@ -68,8 +68,15 @@ public class MusicController {
 
     @GetMapping("/top")
     public ResponseEntity<List<TopMusicDTO>> getTop(
-            @RequestParam(defaultValue = "10") int limit) {
-        return ResponseEntity.ok(playService.getTopMusics(limit));
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(required = false) String userId) {
+        return ResponseEntity.ok(playService.getTopMusics(limit, userId));
+    }
+
+    @DeleteMapping("/plays")
+    public ResponseEntity<Void> resetPlays() {
+        playService.resetAllPlays();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/genre/{genre}")

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,8 +7,12 @@ export default function Registro() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
-  const { registrar, loadingAuth } = useAuth();
+  const { user, registrar, loadingAuth } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate('/home', { replace: true });
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,9 +21,8 @@ export default function Registro() {
     setErro('');
     try {
       await registrar(nome, email, senha);
-      navigate('/home');
     } catch (e) {
-      setErro(e.message); // ex: "Email já cadastrado"
+      setErro(e.message);
     }
   };
 

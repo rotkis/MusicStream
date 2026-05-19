@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
 import PlaylistCard from '../components/PlaylistCard';
 import FilaReproducao from '../components/FilaReproducao';
-import { getMusicas, getTopMusicas, getPlaylists } from '../services/api';
+import { getMusicas, getTopMusicas, getPlaylists, resetTopMusicas } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { usePlayer } from '../contexts/PlayerContext';
 
@@ -12,9 +12,23 @@ export default function Home() {
   const [top, setTop] = useState([]);
   const [playlists, setPlaylists] = useState([]);
   const [erro, setErro] = useState(null);
+  const [resetando, setResetando] = useState(false);
   const { user } = useAuth();
   const { play } = usePlayer();
   const userId = user?.id;
+
+  const handleResetPlays = async () => {
+    if (!window.confirm('Resetar todas as contagens de plays?')) return;
+    setResetando(true);
+    try {
+      await resetTopMusicas();
+      setTop([]);
+    } catch {
+      setErro('Erro ao resetar plays');
+    } finally {
+      setResetando(false);
+    }
+  };
 
   const handlePlayRandom = () => {
     const lista = musicas.length > 0 ? musicas : top;
@@ -29,7 +43,7 @@ export default function Home() {
   useEffect(() => {
     async function load() {
       try {
-        const [m, t] = await Promise.all([getMusicas(), getTopMusicas()]);
+        const [m, t] = await Promise.all([getMusicas(), getTopMusicas(10, userId)]);
         setMusicas(m);
         setTop(t);
         if (userId) {
@@ -52,6 +66,7 @@ export default function Home() {
 
       <section className="banner">
         <div className="banner-content">
+          {user?.nome && <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: 4 }}>Olá, <strong style={{ color: 'var(--accent)' }}>{user.nome}</strong></p>}
           <h1>Escute o que<br /><span>te move</span></h1>
           <button onClick={handlePlayRandom}>▶ Reproduzir Agora</button>
         </div>
@@ -64,7 +79,25 @@ export default function Home() {
 
       {top.length > 0 && (
         <section className="section">
-          <h2>🔥 Top mais ouvidas</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+            <h2 style={{ margin: 0 }}>🔥 Top mais ouvidas</h2>
+            <button
+              onClick={handleResetPlays}
+              disabled={resetando}
+              style={{
+                background: 'rgba(255,60,60,0.1)',
+                color: '#ff6b6b',
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                padding: '5px 12px',
+                borderRadius: 99,
+                border: '1px solid rgba(255,60,60,0.2)',
+                opacity: resetando ? 0.5 : 1,
+              }}
+            >
+              {resetando ? 'Resetando...' : 'Resetar'}
+            </button>
+          </div>
           <div className="cards">
             {top.map((m, i) => (
               <div key={m.id} style={{ position: 'relative', animationDelay: `${i * 0.05}s` }}>

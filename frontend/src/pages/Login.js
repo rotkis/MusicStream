@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,8 +6,12 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
-  const { login, loadingAuth } = useAuth();
+  const { user, login, loadingAuth } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate('/home', { replace: true });
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,9 +19,8 @@ export default function Login() {
     setErro('');
     try {
       await login(email, senha);
-      navigate('/home');
     } catch (e) {
-      setErro(e.message); // mensagem vinda do backend
+      setErro(e.message);
     }
   };
 

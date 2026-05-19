@@ -7,8 +7,10 @@ export async function getMusicas() {
   return res.json();
 }
 
-export async function getTopMusicas(limit = 10) {
-  const res = await fetch(`${API_URL}/musicas/top?limit=${limit}`);
+export async function getTopMusicas(limit = 10, userId = null) {
+  let url = `${API_URL}/musicas/top?limit=${limit}`;
+  if (userId) url += `&userId=${encodeURIComponent(userId)}`;
+  const res = await fetch(url);
   if (!res.ok) throw new Error("Erro ao buscar top músicas");
   return res.json();
 }
@@ -72,6 +74,11 @@ export async function deletarPlaylist(playlistId) {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Erro ao deletar playlist');
+}
+
+export async function resetTopMusicas() {
+  const res = await fetch(`${API_URL}/musicas/plays`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Erro ao resetar plays');
 }
 
 export async function removerMusicaPlaylist(playlistId, musicaId) {
