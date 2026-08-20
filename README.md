@@ -1,16 +1,47 @@
 # MusicStream
 
-Sistema de streaming de música com Java Spring Boot + React e 3 bancos de dados.
+API de streaming de música com arquitetura **polyglot persistence** (3 bancos de dados), construída com Java 21 + Spring Boot e frontend em React.
 
-## Tecnologias
+Projeto desenvolvido com foco em decisões reais de arquitetura de dados: cada banco foi escolhido de acordo com o padrão de acesso e o tipo de dado.
 
-- **Backend:** Java 21 + Spring Boot 4.0.5
-- **Bancos:**
-  - **PostgreSQL** — catálogo de músicas (`musics`) e usuários (`users`)
-  - **Cassandra** — logs de reprodução (`music_plays`) e ranking
-  - **MongoDB** — playlists dos usuários (`playlists`)
-- **Frontend:** React.js
-- **Infra:** Docker Compose
+---
+
+## Destaques Técnicos
+
+- **Arquitetura multi-banco (Polyglot Persistence)**
+  - PostgreSQL → dados relacionais e transacionais (usuários + catálogo de músicas)
+  - Cassandra → escrita massiva de logs de reprodução e ranking
+  - MongoDB → documentos flexíveis de playlists
+- Autenticação de usuários (login + registro)
+- Ranking de músicas mais ouvidas (global e por usuário)
+- Sistema de playlists com shuffle ponderado
+- Containerizado com Docker Compose (sobe tudo com um comando)
+- Documentação de endpoints via Postman
+
+---
+
+## Stack
+
+| Camada       | Tecnologia              |
+|--------------|-------------------------|
+| Backend      | Java 21 + Spring Boot   |
+| Frontend     | React.js                |
+| Bancos       | PostgreSQL, Cassandra, MongoDB |
+| Infra        | Docker Compose          |
+
+---
+
+## Por que 3 bancos diferentes?
+
+| Banco          | Responsabilidade                  | Motivo da escolha                              |
+|----------------|-----------------------------------|------------------------------------------------|
+| **PostgreSQL** | Catálogo de músicas + usuários    | ACID, consultas por artista/gênero, relacionamentos |
+| **Cassandra**  | Logs de reprodução + ranking      | Alta taxa de escrita, escalabilidade horizontal |
+| **MongoDB**    | Playlists dos usuários            | Schema flexível, arrays aninhados de músicas   |
+
+Essa decisão foi tomada para praticar o conceito de **polyglot persistence** — usar o banco certo para cada tipo de carga.
+
+---
 
 ## Como rodar
 
@@ -18,71 +49,64 @@ Sistema de streaming de música com Java Spring Boot + React e 3 bancos de dados
 docker compose up --build -d
 ```
 
-Acessar em http://localhost:3000
+Acesse: [http://localhost:3000](http://localhost:3000)
 
-## Endpoints da API
+---
+
+## Principais Endpoints
 
 ### Autenticação
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | `/api/auth/login` | Login (email + senha) |
-| POST | `/api/auth/registro` | Cadastro (nome + email + senha) |
+| Método | Rota                  | Descrição                     |
+|--------|-----------------------|-------------------------------|
+| POST   | `/api/auth/login`     | Login (email + senha)         |
+| POST   | `/api/auth/registro`  | Cadastro de novo usuário      |
 
 ### Músicas
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/api/musicas` | Lista todas as músicas |
-| GET | `/api/musicas/{id}` | Detalhes de uma música |
-| POST | `/api/musicas` | Cadastra nova música |
-| DELETE | `/api/musicas/{id}` | Remove música |
-| GET | `/api/musicas/top?limit=10&userId=` | Top mais ouvidas (por usuário ou global) |
-| GET | `/api/musicas/search?artist=` | Busca por artista |
-| GET | `/api/musicas/genre/{genre}` | Filtra por gênero |
-| POST | `/api/musicas/{id}/play?userId=` | Registra reprodução |
-| DELETE | `/api/musicas/plays` | Reseta todas as contagens de play |
+| Método | Rota                              | Descrição                              |
+|--------|-----------------------------------|----------------------------------------|
+| GET    | `/api/musicas`                    | Lista todas as músicas                 |
+| GET    | `/api/musicas/{id}`               | Detalhes de uma música                 |
+| POST   | `/api/musicas`                    | Cadastra nova música                   |
+| DELETE | `/api/musicas/{id}`               | Remove música                          |
+| GET    | `/api/musicas/top`                | Top mais ouvidas (global ou por user)  |
+| GET    | `/api/musicas/search?artist=`     | Busca por artista                      |
+| GET    | `/api/musicas/genre/{genre}`      | Filtra por gênero                      |
+| POST   | `/api/musicas/{id}/play`          | Registra uma reprodução                |
 
 ### Playlists
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/api/playlists/{userId}` | Lista playlists do usuário |
-| POST | `/api/playlists` | Cria nova playlist |
-| PATCH | `/api/playlists/{id}/musicas/{musicaId}` | Adiciona música à playlist |
-| DELETE | `/api/playlists/{id}` | Deleta playlist |
-| DELETE | `/api/playlists/{id}/musicas/{musicaId}` | Remove música da playlist |
-| GET | `/api/playlists/{id}/shuffle` | Ordem aleatória ponderada |
+| Método | Rota                                      | Descrição                        |
+|--------|-------------------------------------------|----------------------------------|
+| GET    | `/api/playlists/{userId}`                 | Lista playlists do usuário       |
+| POST   | `/api/playlists`                          | Cria nova playlist               |
+| PATCH  | `/api/playlists/{id}/musicas/{musicaId}`  | Adiciona música à playlist       |
+| DELETE | `/api/playlists/{id}`                     | Remove playlist                  |
+| GET    | `/api/playlists/{id}/shuffle`             | Ordem aleatória ponderada        |
 
-## Arquitetura dos Bancos
+---
 
-| Banco | Dados | Motivo |
-|-------|-------|--------|
-| **PostgreSQL** | `musics` (catálogo), `users` (contas) | Dados relacionais, ACID, consultas por artista/gênero |
-| **Cassandra** | `music_plays` (logs de play) | Escrita massiva, escalabilidade horizontal |
-| **MongoDB** | `playlists` (documentos flexíveis) | Schema flexível, array de músicas aninhado |
+## Estrutura do Projeto
 
-## Comandos para visualizar os bancos
-
-### PostgreSQL
-```bash
-docker exec -it music_postgres psql -U admin -d musicdb -c "SELECT id, title, artist, genre FROM musics LIMIT 10;"
-docker exec -it music_postgres psql -U admin -d musicdb -c "SELECT id, nome, email FROM users;"
+```
+MusicStream/
+├── backend/                 # Spring Boot (Java 21)
+├── frontend/                # React.js
+├── docker-compose.yml       # Sobe PostgreSQL + Cassandra + MongoDB + apps
+├── .postman/                # Collection de testes da API
+└── README.md
 ```
 
-### Cassandra
-```bash
-docker exec -it music_cassandra cqlsh -e "SELECT * FROM music_keyspace.music_plays LIMIT 10;"
-```
+---
 
-### MongoDB
-```bash
-docker exec -it music_mongodb mongosh musicdb --eval "db.playlists.find().pretty()"
-```
+## Decisões de Arquitetura
 
-## Páginas (Frontend)
+- **Cassandra** para `music_plays`: logs de reprodução têm alta taxa de escrita e não precisam de joins complexos. Ideal para ranking e histórico.
+- **MongoDB** para playlists: cada playlist é um documento com array de músicas — modelo natural para esse tipo de dado.
+- **PostgreSQL** para o restante: integridade referencial e consultas relacionais clássicas.
 
-| Rota | Página |
-|------|--------|
-| `/home` | Home com top do usuário e playlists |
-| `/minhas-musicas` | Catálogo completo de músicas |
-| `/minhas-playlists` | Gerenciar playlists |
-| `/playlist/:id` | Detalhes da playlist |
-| `/player` | Player com fila de reprodução |
+---
+
+## Autor
+
+Desenvolvido por [Arthur Carvalho Rotkis](https://github.com/rotkis)
+
+- LinkedIn: [linkedin.com/in/arthurrotkis](https://www.linkedin.com/in/arthurrotkis/)
